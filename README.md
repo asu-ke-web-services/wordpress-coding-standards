@@ -7,3 +7,7 @@ The newer coding standards are actually hosted by [wordpress on github](https://
 
 The origins of this code are unknown, someone found them on the internet somewhere and we've been using them ever since. 
 
+## Adding the coding standards as a git submodule
+````
+git submodule add https://github.com/gios-asu/wordpress-coding-standards.git coding_standards
+````
