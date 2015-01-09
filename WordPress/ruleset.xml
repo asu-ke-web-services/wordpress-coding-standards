@@ -4,5 +4,4 @@
 
 	<rule ref="WordPress-Core"/>
 	<rule ref="WordPress-Extra"/>
-	<rule ref="WordPress-VIP"/>
 </ruleset>
