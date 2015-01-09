@@ -4,21 +4,21 @@
  *
  * PHP version 5
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    John Godley <john@urbangiraffe.com>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   John Godley <john@urbangiraffe.com>
+ * @author   Greg Sherwood <gsherwood@squiz.net>
+ * @author   Marc McIntyre <mmcintyre@squiz.net>
  */
 
 /**
  * Enforces WordPress array format
  *
- * @category  PHP
- * @package   PHP_CodeSniffer
- * @author    John Godley <john@urbangiraffe.com>
- * @author    Greg Sherwood <gsherwood@squiz.net>
- * @author    Marc McIntyre <mmcintyre@squiz.net>
+ * @category PHP
+ * @package  PHP_CodeSniffer
+ * @author   John Godley <john@urbangiraffe.com>
+ * @author   Greg Sherwood <gsherwood@squiz.net>
+ * @author   Marc McIntyre <mmcintyre@squiz.net>
  */
 class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_Sniff
 {
@@ -51,17 +51,27 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
 
         // Array keyword should be lower case.
         if (strtolower($tokens[$stackPtr]['content']) !== $tokens[$stackPtr]['content']) {
-            $error = 'Array keyword should be lower case; expected "array" but found "'.$tokens[$stackPtr]['content'].'"';
-            $phpcsFile->addError($error, $stackPtr);
+            $error = 'Array keyword should be lower case; expected "array" but found "%s"';
+            $data  = array($tokens[$stackPtr]['content']);
+            $phpcsFile->addError($error, $stackPtr, 'NotLowerCase', $data);
         }
 
-        $arrayStart   = $tokens[$stackPtr]['parenthesis_opener'];
-        $arrayEnd     = $tokens[$arrayStart]['parenthesis_closer'];
+        if ( ! isset( $tokens[$stackPtr]['parenthesis_opener'] ) ) {
+            $phpcsFile->addError('Missing parenthesis opener.', $stackPtr);
+            return;
+        }
+        $arrayStart = $tokens[$stackPtr]['parenthesis_opener'];
+        if ( ! isset( $tokens[$arrayStart]['parenthesis_closer'] ) ) {
+            $phpcsFile->addError('Missing parenthesis closer.', $arrayStart);
+            return;
+        }
+        $arrayEnd = $tokens[$arrayStart]['parenthesis_closer'];
+
         $keywordStart = $tokens[$stackPtr]['column'];
 
         if ($arrayStart != ($stackPtr + 1)) {
             $error = 'There must be no space between the Array keyword and the opening parenthesis';
-            $phpcsFile->addError($error, $stackPtr);
+            $phpcsFile->addError($error, $stackPtr, 'SpaceAfterKeyword');
         }
 
         // Check for empty arrays.
@@ -70,7 +80,7 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
             // Empty array, but if the brackets aren't together, there's a problem.
             if (($arrayEnd - $arrayStart) !== 1) {
                 $error = 'Empty array declaration must have no space between the parentheses';
-                $phpcsFile->addError($error, $stackPtr);
+                $phpcsFile->addError($error, $stackPtr, 'SpaceInEmptyArray');
 
                 // We can return here because there is nothing else to check. All code
                 // below can assume that the array is not empty.
@@ -79,30 +89,30 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
         }
 
         if ($tokens[$arrayStart]['line'] === $tokens[$arrayEnd]['line']) {
-		        $openBracket = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
-		        if ($tokens[($openBracket + 1)]['code'] !== T_WHITESPACE && $tokens[($openBracket + 1)]['code'] !== T_CLOSE_PARENTHESIS) {
-            // Checking this: $value = my_function([*]...).
-            $error = 'No space after opening parenthesis of array prohibited';
-            $phpcsFile->addError($error, $stackPtr);
-        }
-		        $closer = $tokens[$openBracket]['parenthesis_closer'];
-
-        if ($tokens[($closer - 1)]['code'] !== T_WHITESPACE) {
-            // Checking this: $value = my_function(...[*]).
-            $between = $phpcsFile->findNext(T_WHITESPACE, ($openBracket + 1), null, true);
-
-            // Only throw an error if there is some content between the parenthesis.
-            // i.e., Checking for this: $value = my_function().
-            // If there is no content, then we would have thrown an error in the
-            // previous IF statement because it would look like this:
-            // $value = my_function( ).
-
-            if ($between !== $closer) {
-                $error = 'No space before closing parenthesis of array prohibited';
-                $phpcsFile->addError($error, $closer);
+            $openBracket = $phpcsFile->findNext(PHP_CodeSniffer_Tokens::$emptyTokens, ($stackPtr + 1), null, true);
+            if ($tokens[($openBracket + 1)]['code'] !== T_WHITESPACE && $tokens[($openBracket + 1)]['code'] !== T_CLOSE_PARENTHESIS) {
+                // Checking this: $value = my_function([*]...).
+                $warning = 'No space after opening parenthesis of array is bad style';
+                $phpcsFile->addWarning($warning, $stackPtr);
             }
-        }
-		
+
+            $closer = $tokens[$openBracket]['parenthesis_closer'];
+
+            if ($tokens[($closer - 1)]['code'] !== T_WHITESPACE) {
+                // Checking this: $value = my_function(...[*]).
+                $between = $phpcsFile->findNext(T_WHITESPACE, ($openBracket + 1), null, true);
+
+                // Only throw an error if there is some content between the parenthesis.
+                // i.e., Checking for this: $value = my_function().
+                // If there is no content, then we would have thrown an error in the
+                // previous IF statement because it would look like this:
+                // $value = my_function( ).
+                if ($between !== $closer) {
+                    $warning = 'No space before closing parenthesis of array is bad style';
+                    $phpcsFile->addWarning($warning, $closer);
+                }
+            }
+
             // Single line array.
             // Check if there are multiple values. If so, then it has to be multiple lines
             // unless it is contained inside a function call or condition.
@@ -189,9 +199,7 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
 
             if ($tokens[$nextToken]['code'] === T_ARRAY) {
                 // Let subsequent calls of this test handle nested arrays.
-                $indices[] = array(
-                              'value' => $nextToken,
-                             );
+                $indices[] = array( 'value' => $nextToken );
                 $nextToken = $tokens[$tokens[$nextToken]['parenthesis_opener']]['parenthesis_closer'];
                 continue;
             }
@@ -202,17 +210,11 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
                     $stackPtrCount = count($tokens[$stackPtr]['nested_parenthesis']);
                 }
 
-                if (count($tokens[$nextToken]['nested_parenthesis']) > ($stackPtrCount + 1)) {
+                if (isset($tokens[$nextToken]['nested_parenthesis']) && count($tokens[$nextToken]['nested_parenthesis']) > ($stackPtrCount + 1)) {
                     // This comma is inside more parenthesis than the ARRAY keyword,
                     // then there it is actually a comma used to seperate arguments
                     // in a function call.
                     continue;
-                }
-
-                if ($keyUsed === true && $lastToken === T_COMMA) {
-                    $error = 'No key specified for array entry; first entry specifies key';
-                    $phpcsFile->addError($error, $nextToken);
-                    return;
                 }
 
                 if ($keyUsed === false) {
@@ -305,14 +307,6 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
             }
         }
 
-        if ($singleValue === true) {
-            // Array cannot be empty, so this is a multi-line array with
-            // a single value. It should be defined on single line.
-            $error = 'Multi-line array contains a single value; use single-line array instead';
-            $phpcsFile->addError($error, $stackPtr);
-            return;
-        }
-
         /*
             This section checks for arrays that don't specify keys.
 
@@ -328,7 +322,7 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
             $count     = count($indices);
             $lastIndex = $indices[($count - 1)]['value'];
 
-            $trailingContent = $phpcsFile->findPrevious(T_WHITESPACE, ($arrayEnd - 1), $lastIndex, true);
+            $trailingContent = $phpcsFile->findPrevious(array(T_WHITESPACE, T_COMMENT), ($arrayEnd - 1), $lastIndex, true);
             if ($tokens[$trailingContent]['code'] !== T_COMMA) {
                 $error = 'Comma required after last value in array declaration';
                 $phpcsFile->addError($error, $trailingContent);
@@ -341,15 +335,18 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
                     // Other parts of this sniff will correct the error.
                     continue;
                 }
-/*
-                if ($tokens[($value['value'] - 1)]['code'] === T_WHITESPACE) {
-                    // A whitespace token before this value means that the value
-                    // was indented and not flush with the opening parenthesis.
-                    if ($tokens[$value['value']]['column'] !== ($keywordStart + 1)) {
-                        $error = 'Array value not aligned correctly; expected '.($keywordStart + 1).' spaces but found '.$tokens[$value['value']]['column'];
-                        $phpcsFile->addError($error, $value['value']);
+
+                /*
+                    if ($tokens[($value['value'] - 1)]['code'] === T_WHITESPACE) {
+                        // A whitespace token before this value means that the value
+                        // was indented and not flush with the opening parenthesis.
+                        if ($tokens[$value['value']]['column'] !== ($keywordStart + 1)) {
+                            $error = 'Array value not aligned correctly; expected '.($keywordStart + 1).' spaces but found '.$tokens[$value['value']]['column'];
+                            $phpcsFile->addError($error, $value['value']);
+                        }
                     }
-                }*/
+                */
+
             }
         }//end if
 
@@ -389,47 +386,61 @@ class WordPress_Sniffs_Arrays_ArrayDeclarationSniff implements PHP_CodeSniffer_S
                 continue;
             }
 
-            if (isset($index['index_content']) === true) {
-                $indexContent = trim($index['index_content'], "'");
-                if (preg_match('|^[a-zA-Z0-9_]+$|', $indexContent) === 1) {
-                    if (strtolower($indexContent) !== $indexContent) {
-                        $error = 'Array index "'.$indexContent.'" should not contain uppercase characters';
-                        $phpcsFile->addError($error, $index['index']);
-                    }
-                }
-            }
-
             if (($tokens[$index['index']]['line'] === $tokens[$stackPtr]['line'])) {
                 $phpcsFile->addError('The first index in a multi-value array must be on a new line', $stackPtr);
                 continue;
             }
-/*
-            if ($tokens[$index['index']]['column'] !== $indicesStart) {
-                $phpcsFile->addError('Array key not aligned correctly; expected '.$indicesStart.' spaces but found '.$tokens[$index['index']]['column'], $index['index']);
-                continue;
-            }
 
-            if ($tokens[$index['arrow']]['column'] !== $arrowStart) {
-                $expected  = ($arrowStart - (strlen($index['index_content']) + $tokens[$index['index']]['column']));
-                $expected .= ($expected === 1) ? ' space' : ' spaces';
-                $found     = ($tokens[$index['arrow']]['column'] - (strlen($index['index_content']) + $tokens[$index['index']]['column']));
-                $phpcsFile->addError("Array double arrow not aligned correctly; expected $expected but found $found", $index['arrow']);
-                continue;
-            }
+            /*
+                if ($tokens[$index['index']]['column'] !== $indicesStart) {
+                    $phpcsFile->addError('Array key not aligned correctly; expected '.$indicesStart.' spaces but found '.$tokens[$index['index']]['column'], $index['index']);
+                    continue;
+                }
 
-            if ($tokens[$index['value']]['column'] !== $valueStart) {
-                $expected  = ($valueStart - (strlen($tokens[$index['arrow']]['content']) + $tokens[$index['arrow']]['column']));
-                $expected .= ($expected === 1) ? ' space' : ' spaces';
-                $found     = ($tokens[$index['value']]['column'] - (strlen($tokens[$index['arrow']]['content']) + $tokens[$index['arrow']]['column']));
-                $phpcsFile->addError("Array value not aligned correctly; expected $expected but found $found", $index['arrow']);
-            }
-*/
+                if ($tokens[$index['arrow']]['column'] !== $arrowStart) {
+                    $expected  = ($arrowStart - (strlen($index['index_content']) + $tokens[$index['index']]['column']));
+                    $expected .= ($expected === 1) ? ' space' : ' spaces';
+                    $found     = ($tokens[$index['arrow']]['column'] - (strlen($index['index_content']) + $tokens[$index['index']]['column']));
+                    $phpcsFile->addError("Array double arrow not aligned correctly; expected $expected but found $found", $index['arrow']);
+                    continue;
+                }
+
+                if ($tokens[$index['value']]['column'] !== $valueStart) {
+                    $expected  = ($valueStart - (strlen($tokens[$index['arrow']]['content']) + $tokens[$index['arrow']]['column']));
+                    $expected .= ($expected === 1) ? ' space' : ' spaces';
+                    $found     = ($tokens[$index['value']]['column'] - (strlen($tokens[$index['arrow']]['content']) + $tokens[$index['arrow']]['column']));
+                    $phpcsFile->addError("Array value not aligned correctly; expected $expected but found $found", $index['arrow']);
+                }
+            */
+
+            // Make sure that we can end lines in brackets and not commas
+            $nextBracket = $phpcsFile->findNext(array(T_OPEN_CURLY_BRACKET, T_OPEN_PARENTHESIS), ($index['value'] + 1));
+            $lineEndsWithOpenBracket = (
+                $nextBracket !== false
+                &&
+                $tokens[$nextBracket]['line'] === $tokens[$index['value']]['line']
+            );
+
             // Check each line ends in a comma.
-            if ($tokens[$index['value']]['code'] !== T_ARRAY) {
+            if ( ! in_array( $tokens[$index['value']]['code'], array( T_ARRAY, T_CLOSURE ) ) && ! $lineEndsWithOpenBracket ) {
                 $nextComma = $phpcsFile->findNext(array(T_COMMA), ($index['value'] + 1));
-                if (($nextComma === false) || ($tokens[$nextComma]['line'] !== $tokens[$index['value']]['line'])) {
-                    $error = 'Each line in an array declaration must end in a comma';
-                    $phpcsFile->addError($error, $index['value']);
+                if (($nextComma === false) || ($nextComma != $index['value']+1) ) {
+                    $fail = true;
+                    // Check if the value token is extending over multiple lines
+                    for ( $i = $index['value']; $i < $nextComma; $i++ ) {
+                        // If the same token code continues ( over multiple lines ), then it is probably the same token
+                        if ( $tokens[$i]['code'] != $tokens[$index['value']]['code'] && $tokens[$nextComma]['line'] != $tokens[$i]['line'] ) {
+                            // Fail if a token between the value and the comma is not of the same code
+                            $fail = true;
+                            break;
+                        } else {
+                            $fail = false;
+                        }
+                    }
+                    if ( $fail ) {
+                        $error = 'Each line in an array declaration must end in a comma';
+                        $phpcsFile->addError($error, $index['value']);
+                    }
                 }
 
                 // Check that there is no space before the comma.
