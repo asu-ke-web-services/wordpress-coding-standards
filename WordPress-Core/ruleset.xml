@@ -22,8 +22,8 @@
 	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
-			<property name="indent" value="4"/>
-			<property name="tabIndent" value="true"/>
+			<property name="indent" value="2"/>
+			<property name="tabIndent" value="false"/>
 		</properties>
 	</rule>
 
