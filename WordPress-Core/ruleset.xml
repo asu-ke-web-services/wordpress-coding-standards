@@ -18,8 +18,6 @@
 	<rule ref="Generic.PHP.LowerCaseConstant"/>
 
 	<!-- http://make.wordpress.org/core/handbook/coding-standards/php/#indentation -->
-	<arg name="tab-width" value="4"/>
-	<rule ref="Generic.WhiteSpace.DisallowSpaceIndent"/>
 	<rule ref="Generic.WhiteSpace.ScopeIndent">
 		<properties>
 			<property name="indent" value="2"/>
