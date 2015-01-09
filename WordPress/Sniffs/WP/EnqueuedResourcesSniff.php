@@ -41,15 +41,15 @@ class WordPress_Sniffs_WP_EnqueuedResourcesSniff implements PHP_CodeSniffer_Snif
         $tokens = $phpcsFile->getTokens();
         $token  = $tokens[$stackPtr];
 
-        if ( preg_match( '#rel=[\'"]?stylesheet[\'"]?#', $token['content'], $matches ) > 0 ) {
-            $phpcsFile->addError( 'Stylesheets must be registered/enqueued via wp_enqueue_style', $stackPtr );
-            return;
-        }
+        // if ( preg_match( '#rel=[\'"]?stylesheet[\'"]?#', $token['content'], $matches ) > 0 ) {
+        //     $phpcsFile->addError( 'Stylesheets must be registered/enqueued via wp_enqueue_style', $stackPtr );
+        //     return;
+        // }
 
-        if ( preg_match( '#<script[^>]*(?<=src=)#', $token['content'], $matches ) > 0 ) {
-            $phpcsFile->addError( 'Scripts must be registered/enqueued via wp_enqueue_script', $stackPtr );
-            return;
-        }
+        // if ( preg_match( '#<script[^>]*(?<=src=)#', $token['content'], $matches ) > 0 ) {
+        //     $phpcsFile->addError( 'Scripts must be registered/enqueued via wp_enqueue_script', $stackPtr );
+        //     return;
+        // }
 
     }//end process()
 
