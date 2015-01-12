@@ -47,14 +47,14 @@ class WordPress_Sniffs_VIP_RestrictedFunctionsSniff extends WordPress_Sniffs_Fun
 				),
 			),
 
-			'file_get_contents' => array(
-				'type' => 'warning',
-				'message' => '%s is highly discouraged, please use wpcom_vip_file_get_contents() instead.',
-				'functions' => array(
-					'file_get_contents',
-					'vip_wp_file_get_contents',
-					),
-				),
+			// 'file_get_contents' => array(
+			// 	'type' => 'warning',
+			// 	'message' => '%s is highly discouraged, please use wpcom_vip_file_get_contents() instead.',
+			// 	'functions' => array(
+			// 		'file_get_contents',
+			// 		'vip_wp_file_get_contents',
+			// 		),
+			// 	),
 
 			'wp_remote_get' => array(
 				'type' => 'warning',
