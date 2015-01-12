@@ -360,7 +360,8 @@ class WordPress_Sniffs_XSS_EscapeOutputSniff implements PHP_CodeSniffer_Sniff
 					in_array( $functionName, self::$sanitizingFunctions ) === false
 					) {
 
-					$phpcsFile->addError( "Expected a sanitizing function (see Codex for 'Data Validation'), but instead saw '%s'", $i, null, $tokens[$i]['content'] );
+					// No sanitizing functions if we are not in wordpress
+					//$phpcsFile->addError( "Expected a sanitizing function (see Codex for 'Data Validation'), but instead saw '%s'", $i, null, $tokens[$i]['content'] );
 				}
 
 				// Skip pointer to after the function
