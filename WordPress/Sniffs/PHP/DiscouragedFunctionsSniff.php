@@ -38,6 +38,10 @@ class WordPress_Sniffs_PHP_DiscouragedFunctionsSniff extends Generic_Sniffs_PHP_
                                      'ereg'                     => null,
                                      'eregi_replace'            => 'preg_replace',
                                      'spliti'                   => null,
+                                     'sizeof'                   => 'count',
+                                     'delete'                   => 'unset',
+                                     'split'                    => 'explode',
+                                     'mysql_escape_string '     => null,
                                      // WordPress
                                      'find_base_dir'            => 'WP_Filesystem::abspath',
                                      'get_base_dir'             => 'WP_Filesystem::abspath',
