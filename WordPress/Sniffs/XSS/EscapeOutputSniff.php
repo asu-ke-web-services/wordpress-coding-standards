@@ -347,7 +347,8 @@ class WordPress_Sniffs_XSS_EscapeOutputSniff implements PHP_CodeSniffer_Sniff
 
 			// Now check that next token is a function call.
 			if ( in_array( $tokens[$i]['code'], array( T_STRING ) ) === false ) {
-				$phpcsFile->addError( "Expected next thing to be a escaping function, not '%s'", $i, null, $tokens[$i]['content'] );
+				// Don't worry about escaping functions
+				//$phpcsFile->addError( "Expected next thing to be a escaping function, not '%s'", $i, null, $tokens[$i]['content'] );
 				continue;
 			}
 
