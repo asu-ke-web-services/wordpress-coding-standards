@@ -34,13 +34,10 @@ class WordPress_Sniffs_PHP_DiscouragedFunctionsSniff extends Generic_Sniffs_PHP_
      * @var array(string => string|null)
      */
     public $forbiddenFunctions = array(
-                                     'print_r'                  => null,
                                      'ereg_replace'             => 'preg_replace',
                                      'ereg'                     => null,
                                      'eregi_replace'            => 'preg_replace',
-                                     'split'                    => null,
                                      'spliti'                   => null,
-                                     'var_dump'                 => null,
                                      // WordPress
                                      'find_base_dir'            => 'WP_Filesystem::abspath',
                                      'get_base_dir'             => 'WP_Filesystem::abspath',
