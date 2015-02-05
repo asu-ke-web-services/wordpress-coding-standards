@@ -26,17 +26,18 @@ class WordPress_Sniffs_VIP_SlowDBQuerySniff extends WordPress_Sniffs_Arrays_Arra
 	 * @return array
 	 */
 	public function getGroups() {
-		return array(
-			'slow_db_query' => array(
-				'type' => 'warning',
-				'message' => 'Detected usage of %s, possible slow query.',
-				'keys' => array(
-					'tax_query',
-					'meta_query',
-					'meta_key',
-					'meta_value',
-					),
-				)
-			);
+		// Unable to exclude this sniff.. so we're just commenting it out
+		// return array(
+		// 	'slow_db_query' => array(
+		// 		'type' => 'warning',
+		// 		'message' => 'Detected usage of %s, possible slow query.',
+		// 		'keys' => array(
+		// 			'tax_query',
+		// 			'meta_query',
+		// 			'meta_key',
+		// 			'meta_value',
+		// 			),
+		// 		)
+		// 	);
 	}
 }//end class

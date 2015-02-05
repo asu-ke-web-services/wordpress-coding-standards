@@ -34,7 +34,7 @@ class PHP_CodeSniffer_Standards_WordPress_WordPressCodingStandard extends PHP_Co
             'Squiz/Sniffs/WhiteSpace/FunctionSpacingSniff.php',
             'Squiz/Sniffs/WhiteSpace/FunctionClosingBraceSpaceSniff.php',
 			'Squiz/Sniffs/WhiteSpace/OperatorSpacingSniff.php',
-			'Squiz/Sniffs/WhiteSpace/MemberVarSpacingSniff.php'
+			'Squiz/Sniffs/WhiteSpace/MemberVarSpacingSniff.php',
         );
     }
 
@@ -51,11 +51,9 @@ class PHP_CodeSniffer_Standards_WordPress_WordPressCodingStandard extends PHP_Co
 //                'Generic/Sniffs/Strings',
                 'Generic/Sniffs/Formatting/NoSpaceAfterCastSniff.php',
                 'Generic/Sniffs/NamingConventions/UpperCaseConstantNameSniff.php',
-
                 'PEAR/Sniffs/Files/IncludingFileSniff.php',
                 'PEAR/Sniffs/NamingConventions/ValidClassNameSniff.php',
 //                'PEAR/Sniffs/Formatting',
-
                 'Squiz/Sniffs/Strings/EchoedStringsSniff.php',
                 'Squiz/Sniffs/WhiteSpace',
                 'Squiz/Sniffs/PHP/DisallowObEndFlushSniff.php',
@@ -66,10 +64,8 @@ class PHP_CodeSniffer_Standards_WordPress_WordPressCodingStandard extends PHP_Co
                 'Squiz/Sniffs/Operators/ValidLogicalOperatorsSniff.php',
                 'Squiz/Sniffs/Functions/LowercaseFunctionKeywordsSniff.php',
                 'Squiz/Sniffs/Functions/FunctionDuplicateArgumentSniff.php',
-
                 'PEAR/Sniffs/Classes/ClassDeclarationSniff.php',
-
-                'Wordpress/Sniffs'
+                'Wordpress/Sniffs',
                 );
     }
 }

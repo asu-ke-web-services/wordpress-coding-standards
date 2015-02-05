@@ -82,6 +82,7 @@ class WordPress_Sniffs_XSS_EscapeOutputSniff implements PHP_CodeSniffer_Sniff
 		'get_search_query',
 		'get_sidebar',
 		'get_template_part',
+		'get_template_directory_uri',
 		'get_the_author',
 		'get_the_author_link',
 		'get_the_date',
