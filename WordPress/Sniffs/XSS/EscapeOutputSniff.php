@@ -59,6 +59,7 @@ class WordPress_Sniffs_XSS_EscapeOutputSniff implements PHP_CodeSniffer_Sniff
 		'comments_rss_link',
 		'delete_get_calendar_cache',
 		'disabled',
+		'do_shortcode',
 		'do_shortcode_tag',
 		'edit_bookmark_link',
 		'edit_comment_link',
