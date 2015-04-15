@@ -1,5 +1,9 @@
 [![Build Status](https://travis-ci.org/WordPress-Coding-Standards/WordPress-Coding-Standards.png?branch=master)](https://travis-ci.org/WordPress-Coding-Standards/WordPress-Coding-Standards)
 
+# almost-wordpress-standards Branch is for non-wordpress php applications
+It has the string sanitaztion and other wordpress specific checks disabled.
+
+
 # WordPress Coding Standards for PHP_CodeSniffer
 
 This project is a collection of [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) rules (sniffs) to validate code developed for WordPress. It ensures code quality and adherence to coding conventions, especially the official [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/).
